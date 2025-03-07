@@ -1,10 +1,10 @@
 
 import express from 'express';
 import { 
-  assignDoctorToPatient, 
-  getAllMappings, 
-  getDoctorsForPatient, 
-  removeDoctorFromPatient 
+  createPatientDoctor, 
+  getAllPatientDoctors, 
+  getDoctorsByPatientId, 
+  deletePatientDoctor 
 } from '../controllers/patientDoctor.controller';
 import { authenticate } from '../middleware/auth';
 
@@ -14,15 +14,15 @@ const router = express.Router();
 router.use(authenticate);
 
 // Assign a doctor to a patient
-router.post('/', assignDoctorToPatient);
+router.post('/', createPatientDoctor);
 
 // Get all patient-doctor mappings
-router.get('/', getAllMappings);
+router.get('/', getAllPatientDoctors);
 
 // Get all doctors for a specific patient
-router.get('/:patientId', getDoctorsForPatient);
+router.get('/:patientId', getDoctorsByPatientId);
 
 // Remove doctor from patient
-router.delete('/:id', removeDoctorFromPatient);
+router.delete('/:id', deletePatientDoctor);
 
 export default router;

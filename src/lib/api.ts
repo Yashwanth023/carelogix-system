@@ -31,10 +31,49 @@ const setAuthToken = (token: string | null) => {
   }
 };
 
-export default {
+// API endpoints with proper typing
+const apiService = {
+  // Auth endpoints
+  auth: {
+    login: (credentials: { email: string; password: string }) => 
+      api.post('/auth/login', credentials),
+    register: (userData: { name: string; email: string; password: string }) => 
+      api.post('/auth/register', userData),
+  },
+  
+  // Patient endpoints
+  patients: {
+    getAll: () => api.get('/patients'),
+    getById: (id: number) => api.get(`/patients/${id}`),
+    create: (patientData: any) => api.post('/patients', patientData),
+    update: (id: number, patientData: any) => api.put(`/patients/${id}`, patientData),
+    delete: (id: number) => api.delete(`/patients/${id}`),
+  },
+  
+  // Doctor endpoints
+  doctors: {
+    getAll: () => api.get('/doctors'),
+    getById: (id: number) => api.get(`/doctors/${id}`),
+    create: (doctorData: any) => api.post('/doctors', doctorData),
+    update: (id: number, doctorData: any) => api.put(`/doctors/${id}`, doctorData),
+    delete: (id: number) => api.delete(`/doctors/${id}`),
+  },
+  
+  // Patient-Doctor mapping endpoints
+  mappings: {
+    create: (mappingData: { patientId: number; doctorId: number }) => 
+      api.post('/mappings', mappingData),
+    getAll: () => api.get('/mappings'),
+    getByPatientId: (patientId: number) => api.get(`/mappings/${patientId}`),
+    delete: (id: number) => api.delete(`/mappings/${id}`),
+  },
+  
+  // Raw methods for custom endpoints
   get: api.get,
   post: api.post,
   put: api.put,
   delete: api.delete,
   setAuthToken,
 };
+
+export default apiService;
