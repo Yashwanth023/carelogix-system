@@ -1,69 +1,98 @@
-# Welcome to your Lovable project
 
-## Project info
+# CareLogix Healthcare System
 
-**URL**: https://lovable.dev/projects/bb918de2-6e1e-4134-aa03-0fb799e3c0c2
+A comprehensive backend system for a healthcare application using Node.js, Express.js, and PostgreSQL. The system allows users to register, log in, and manage patient and doctor records securely.
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- User authentication with JWT
+- Patient management
+- Doctor management
+- Patient-Doctor relationship mapping
+- RESTful API endpoints
+- PostgreSQL database with Sequelize ORM
 
-**Use Lovable**
+## API Endpoints
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/bb918de2-6e1e-4134-aa03-0fb799e3c0c2) and start prompting.
+### Authentication APIs
+- `POST /api/auth/register` - Register a new user
+- `POST /api/auth/login` - Log in a user and return a JWT token
 
-Changes made via Lovable will be committed automatically to this repo.
+### Patient Management APIs
+- `POST /api/patients` - Add a new patient (Authenticated users only)
+- `GET /api/patients` - Retrieve all patients created by the authenticated user
+- `GET /api/patients/:id` - Get details of a specific patient
+- `PUT /api/patients/:id` - Update patient details
+- `DELETE /api/patients/:id` - Delete a patient record
 
-**Use your preferred IDE**
+### Doctor Management APIs
+- `POST /api/doctors` - Add a new doctor (Authenticated users only)
+- `GET /api/doctors` - Retrieve all doctors
+- `GET /api/doctors/:id` - Get details of a specific doctor
+- `PUT /api/doctors/:id` - Update doctor details
+- `DELETE /api/doctors/:id` - Delete a doctor record
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Patient-Doctor Mapping APIs
+- `POST /api/mappings` - Assign a doctor to a patient
+- `GET /api/mappings` - Retrieve all patient-doctor mappings
+- `GET /api/mappings/:patientId` - Get all doctors assigned to a specific patient
+- `DELETE /api/mappings/:id` - Remove a doctor from a patient
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Setup Instructions
 
-Follow these steps:
+### Prerequisites
+- Node.js (v14 or later)
+- PostgreSQL (v12 or later)
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Setting up the PostgreSQL Database
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+1. Install PostgreSQL on your local machine if you haven't already
+2. Create a new database:
+   ```sql
+   CREATE DATABASE healthcare_db;
+   ```
+3. Create a user (or use the default postgres user)
+   ```sql
+   CREATE USER healthcare_user WITH ENCRYPTED PASSWORD 'your_password';
+   GRANT ALL PRIVILEGES ON DATABASE healthcare_db TO healthcare_user;
+   ```
 
-# Step 3: Install the necessary dependencies.
-npm i
+### Installing and Running the Application
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd healthcare-backend
+   ```
 
-**Edit a file directly in GitHub**
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+3. Create a `.env` file based on the `.env.example` file:
+   ```bash
+   cp .env.example .env
+   ```
 
-**Use GitHub Codespaces**
+4. Update the `.env` file with your PostgreSQL database credentials and JWT secret
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+5. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
-## What technologies are used for this project?
+6. The server should now be running at http://localhost:5000
 
-This project is built with .
+## Technologies Used
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- Node.js and Express.js for the backend
+- PostgreSQL as the database
+- Sequelize ORM for database modeling
+- JWT for authentication
+- TypeScript for type safety
+- React with Tailwind CSS for the frontend
 
-## How can I deploy this project?
+## License
 
-Simply open [Lovable](https://lovable.dev/projects/bb918de2-6e1e-4134-aa03-0fb799e3c0c2) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+MIT
