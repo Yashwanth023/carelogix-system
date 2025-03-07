@@ -131,11 +131,11 @@ export const getDoctorsForPatient = async (req: Request, res: Response) => {
       ]
     });
 
-    // Fix: properly extract Doctor data from the included association
+    // Extract Doctor data from the included association
     const doctors = mappings.map(mapping => {
-      const doctorData = mapping.get({ plain: true });
+      const mappingData = mapping.get({ plain: true });
       return {
-        ...doctorData.Doctor, // Access the Doctor association through the properly aliased key
+        ...mappingData.Doctor, // Access the Doctor association through the relation
         assignmentId: mapping.id,
         assignmentDate: mapping.assignmentDate,
         notes: mapping.notes
@@ -172,7 +172,7 @@ export const removeDoctorFromPatient = async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'Assignment not found' });
     }
 
-    // Fix: properly access the Patient data from the included association
+    // Access the Patient data from the included association
     const mappingData = mapping.get({ plain: true });
     
     // Verify the patient belongs to the user
