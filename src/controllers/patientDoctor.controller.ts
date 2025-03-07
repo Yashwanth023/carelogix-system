@@ -131,12 +131,16 @@ export const getDoctorsForPatient = async (req: Request, res: Response) => {
       ]
     });
 
-    const doctors = mappings.map(mapping => ({
-      ...mapping.doctor.get(),
-      assignmentId: mapping.id,
-      assignmentDate: mapping.assignmentDate,
-      notes: mapping.notes
-    }));
+    // Fix: properly extract Doctor data from the included association
+    const doctors = mappings.map(mapping => {
+      const doctorData = mapping.get({ plain: true });
+      return {
+        ...doctorData.Doctor, // Access the Doctor association through the properly aliased key
+        assignmentId: mapping.id,
+        assignmentDate: mapping.assignmentDate,
+        notes: mapping.notes
+      };
+    });
 
     res.status(200).json(doctors);
   } catch (error) {
@@ -168,8 +172,11 @@ export const removeDoctorFromPatient = async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'Assignment not found' });
     }
 
+    // Fix: properly access the Patient data from the included association
+    const mappingData = mapping.get({ plain: true });
+    
     // Verify the patient belongs to the user
-    if (mapping.patient.userId !== userId) {
+    if (mappingData.Patient?.userId !== userId) {
       return res.status(403).json({ message: 'You do not have permission to remove this assignment' });
     }
 
