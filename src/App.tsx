@@ -16,6 +16,13 @@ import DoctorDashboard from "./pages/doctor/DoctorDashboard";
 import BookConsultation from "./pages/patient/BookConsultation";
 import NotFound from "./pages/NotFound";
 
+// New Pages
+import PatientsList from "./pages/patients/PatientsList";
+import AddPatient from "./pages/patients/AddPatient";
+import DoctorsList from "./pages/doctors/DoctorsList";
+import AddDoctor from "./pages/doctors/AddDoctor";
+import AssignDoctor from "./pages/mappings/AssignDoctor";
+
 const queryClient = new QueryClient();
 
 // Protected route component that checks for user role
@@ -98,6 +105,52 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={['doctor']}>
             <DoctorDashboard />
+          </ProtectedRoute>
+        } 
+      />
+      
+      {/* Patients management routes */}
+      <Route 
+        path="/patients" 
+        element={
+          <ProtectedRoute>
+            <PatientsList />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/patients/new" 
+        element={
+          <ProtectedRoute>
+            <AddPatient />
+          </ProtectedRoute>
+        } 
+      />
+      
+      {/* Doctors management routes */}
+      <Route 
+        path="/doctors" 
+        element={
+          <ProtectedRoute>
+            <DoctorsList />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/doctors/new" 
+        element={
+          <ProtectedRoute>
+            <AddDoctor />
+          </ProtectedRoute>
+        } 
+      />
+      
+      {/* Patient-Doctor mapping routes */}
+      <Route 
+        path="/mappings/new" 
+        element={
+          <ProtectedRoute>
+            <AssignDoctor />
           </ProtectedRoute>
         } 
       />

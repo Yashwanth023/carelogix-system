@@ -1,8 +1,8 @@
 
 import axios from 'axios';
 
-// Use an environment variable for the API URL with a fallback
-const baseURL = process.env.REACT_APP_API_URL || 'https://your-production-api.com/api';
+// Use a direct fallback URL instead of relying on process.env
+const baseURL = import.meta.env.REACT_APP_API_URL || 'https://your-production-api.com/api';
 
 const api = axios.create({
   baseURL,
