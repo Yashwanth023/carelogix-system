@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../lib/api';
+import apiService from '../lib/api';
 
 interface User {
   id: number;
@@ -36,7 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (storedToken && storedUser) {
       setToken(storedToken);
       setUser(JSON.parse(storedUser));
-      api.setAuthToken(storedToken);
+      apiService.setAuthToken(storedToken);
     }
     
     setLoading(false);
@@ -47,7 +47,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setError(null);
     
     try {
-      const response = await api.post('/auth/login', { email, password });
+      const response = await apiService.auth.login({ email, password });
       const { token, user } = response.data;
       
       localStorage.setItem('token', token);
@@ -55,12 +55,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       setToken(token);
       setUser(user);
-      api.setAuthToken(token);
+      apiService.setAuthToken(token);
       
       navigate('/dashboard');
     } catch (err: any) {
       const message = err.response?.data?.message || 'Login failed';
       setError(message);
+      console.error('Login error:', err);
     } finally {
       setLoading(false);
     }
@@ -71,7 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setError(null);
     
     try {
-      const response = await api.post('/auth/register', { name, email, password });
+      const response = await apiService.auth.register({ name, email, password });
       const { token, user } = response.data;
       
       localStorage.setItem('token', token);
@@ -79,12 +80,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       setToken(token);
       setUser(user);
-      api.setAuthToken(token);
+      apiService.setAuthToken(token);
       
       navigate('/dashboard');
     } catch (err: any) {
       const message = err.response?.data?.message || 'Registration failed';
       setError(message);
+      console.error('Registration error:', err);
     } finally {
       setLoading(false);
     }
@@ -95,7 +97,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('user');
     setToken(null);
     setUser(null);
-    api.setAuthToken(null);
+    apiService.setAuthToken(null);
     navigate('/login');
   };
 

@@ -64,7 +64,7 @@ const apiService = {
     create: (mappingData: { patientId: number; doctorId: number }) => 
       api.post('/mappings', mappingData),
     getAll: () => api.get('/mappings'),
-    getByPatientId: (patientId: number) => api.get(`/mappings/${patientId}`),
+    getByPatientId: (patientId: number) => api.get(`/mappings/patient/${patientId}`),
     delete: (id: number) => api.delete(`/mappings/${id}`),
   },
   
