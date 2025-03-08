@@ -1,20 +1,21 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import apiService from '../lib/api';
+import apiService, { UserRegistration, UserCredentials } from '../lib/api';
 import { toast } from '../components/ui/use-toast';
 
 interface User {
   id: number;
   name: string;
   email: string;
+  role: 'patient' | 'doctor';
 }
 
 interface AuthContextType {
   user: User | null;
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
+  register: (name: string, email: string, password: string, role: 'patient' | 'doctor') => Promise<void>;
   logout: () => void;
   loading: boolean;
   error: string | null;
@@ -48,7 +49,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setError(null);
     
     try {
-      const response = await apiService.auth.login({ email, password });
+      const credentials: UserCredentials = { email, password };
+      const response = await apiService.auth.login(credentials);
       const { token, user } = response.data;
       
       localStorage.setItem('token', token);
@@ -63,7 +65,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         description: `Welcome back, ${user.name}!`,
       });
       
-      navigate('/dashboard');
+      // Redirect based on user role
+      if (user.role === 'patient') {
+        navigate('/patient/dashboard');
+      } else if (user.role === 'doctor') {
+        navigate('/doctor/dashboard');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err: any) {
       const message = err.response?.data?.message || 'Login failed. Please check your connection and try again.';
       setError(message);
@@ -79,7 +88,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const register = async (name: string, email: string, password: string) => {
+  const register = async (name: string, email: string, password: string, role: 'patient' | 'doctor') => {
     setLoading(true);
     setError(null);
     
@@ -88,7 +97,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (!process.env.REACT_APP_API_URL) {
         // Mock successful registration
         console.log('Using mock registration since API URL is not set');
-        const mockUser = { id: 1, name, email };
+        const mockUser = { id: 1, name, email, role };
         const mockToken = 'mock-jwt-token';
         
         localStorage.setItem('token', mockToken);
@@ -102,11 +111,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           description: `Welcome, ${name}!`,
         });
         
-        navigate('/dashboard');
+        // Redirect based on user role
+        if (role === 'patient') {
+          navigate('/patient/dashboard');
+        } else if (role === 'doctor') {
+          navigate('/doctor/dashboard');
+        } else {
+          navigate('/dashboard');
+        }
         return;
       }
       
-      const response = await apiService.auth.register({ name, email, password });
+      const userData: UserRegistration = { name, email, password, role };
+      const response = await apiService.auth.register(userData);
       const { token, user } = response.data;
       
       localStorage.setItem('token', token);
@@ -121,7 +138,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         description: `Welcome, ${name}!`,
       });
       
-      navigate('/dashboard');
+      // Redirect based on user role
+      if (user.role === 'patient') {
+        navigate('/patient/dashboard');
+      } else if (user.role === 'doctor') {
+        navigate('/doctor/dashboard');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err: any) {
       const message = err.response?.data?.message || 'Registration failed. Please check your connection and try again.';
       setError(message);

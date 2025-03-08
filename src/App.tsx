@@ -11,12 +11,21 @@ import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import Dashboard from "./pages/Dashboard";
+import PatientDashboard from "./pages/patient/PatientDashboard";
+import DoctorDashboard from "./pages/doctor/DoctorDashboard";
+import BookConsultation from "./pages/patient/BookConsultation";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-// Protected route component
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+// Protected route component that checks for user role
+const ProtectedRoute = ({ 
+  children, 
+  allowedRoles 
+}: { 
+  children: React.ReactNode; 
+  allowedRoles?: ('patient' | 'doctor')[] 
+}) => {
   const { user, loading } = useAuth();
 
   // Show loading indicator while auth state is being determined
@@ -33,6 +42,18 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return <Navigate to="/login" replace />;
   }
 
+  // Check role if allowedRoles is provided
+  if (allowedRoles && !allowedRoles.includes(user.role as 'patient' | 'doctor')) {
+    // Redirect based on user role
+    if (user.role === 'patient') {
+      return <Navigate to="/patient/dashboard" replace />;
+    } else if (user.role === 'doctor') {
+      return <Navigate to="/doctor/dashboard" replace />;
+    } else {
+      return <Navigate to="/dashboard" replace />;
+    }
+  }
+
   return <>{children}</>;
 };
 
@@ -43,12 +64,40 @@ const AppRoutes = () => {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       
-      {/* Protected routes */}
+      {/* Generic dashboard (for backward compatibility) */}
       <Route 
         path="/dashboard" 
         element={
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        } 
+      />
+      
+      {/* Patient routes */}
+      <Route 
+        path="/patient/dashboard" 
+        element={
+          <ProtectedRoute allowedRoles={['patient']}>
+            <PatientDashboard />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/patient/book-consultation" 
+        element={
+          <ProtectedRoute allowedRoles={['patient']}>
+            <BookConsultation />
+          </ProtectedRoute>
+        } 
+      />
+      
+      {/* Doctor routes */}
+      <Route 
+        path="/doctor/dashboard" 
+        element={
+          <ProtectedRoute allowedRoles={['doctor']}>
+            <DoctorDashboard />
           </ProtectedRoute>
         } 
       />

@@ -3,12 +3,15 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import Layout from '../components/layout/Layout';
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
 const RegisterPage: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [role, setRole] = useState<'patient' | 'doctor'>('patient');
   const [passwordError, setPasswordError] = useState('');
   const { register, loading, error } = useAuth();
 
@@ -21,7 +24,7 @@ const RegisterPage: React.FC = () => {
     }
     
     setPasswordError('');
-    await register(name, email, password);
+    await register(name, email, password, role);
   };
 
   return (
@@ -98,6 +101,26 @@ const RegisterPage: React.FC = () => {
               {passwordError && (
                 <p className="mt-1 text-sm text-red-500">{passwordError}</p>
               )}
+            </div>
+
+            <div className="space-y-3">
+              <label className="block text-sm font-medium text-gray-700">
+                I am registering as a:
+              </label>
+              <RadioGroup 
+                value={role} 
+                onValueChange={(value) => setRole(value as 'patient' | 'doctor')} 
+                className="flex space-x-6"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="patient" id="patient" />
+                  <Label htmlFor="patient">Patient</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="doctor" id="doctor" />
+                  <Label htmlFor="doctor">Doctor</Label>
+                </div>
+              </RadioGroup>
             </div>
 
             <div>

@@ -32,13 +32,26 @@ const setAuthToken = (token: string | null) => {
   }
 };
 
+// Define User interfaces
+export interface UserRegistration {
+  name: string;
+  email: string;
+  password: string;
+  role: 'patient' | 'doctor';
+}
+
+export interface UserCredentials {
+  email: string;
+  password: string;
+}
+
 // API endpoints with proper typing
 const apiService = {
   // Auth endpoints
   auth: {
-    login: (credentials: { email: string; password: string }) => 
+    login: (credentials: UserCredentials) => 
       api.post('/auth/login', credentials),
-    register: (userData: { name: string; email: string; password: string }) => 
+    register: (userData: UserRegistration) => 
       api.post('/auth/register', userData),
   },
   
@@ -60,13 +73,14 @@ const apiService = {
     delete: (id: number) => api.delete(`/doctors/${id}`),
   },
   
-  // Patient-Doctor mapping endpoints
-  mappings: {
-    create: (mappingData: { patientId: number; doctorId: number }) => 
-      api.post('/mappings', mappingData),
-    getAll: () => api.get('/mappings'),
-    getByPatientId: (patientId: number) => api.get(`/mappings/patient/${patientId}`),
-    delete: (id: number) => api.delete(`/mappings/${id}`),
+  // Consultations endpoints
+  consultations: {
+    create: (consultationData: { patientId: number, doctorId: number, date: string, time: string, reason: string }) => 
+      api.post('/consultations', consultationData),
+    getAll: () => api.get('/consultations'),
+    getByPatientId: (patientId: number) => api.get(`/consultations/patient/${patientId}`),
+    getByDoctorId: (doctorId: number) => api.get(`/consultations/doctor/${doctorId}`),
+    delete: (id: number) => api.delete(`/consultations/${id}`),
   },
   
   // Raw methods for custom endpoints
