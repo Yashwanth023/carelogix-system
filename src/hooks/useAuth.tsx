@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiService from '../lib/api';
+import { toast } from '../components/ui/use-toast';
 
 interface User {
   id: number;
@@ -57,11 +58,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(user);
       apiService.setAuthToken(token);
       
+      toast({
+        title: "Login successful",
+        description: `Welcome back, ${user.name}!`,
+      });
+      
       navigate('/dashboard');
     } catch (err: any) {
-      const message = err.response?.data?.message || 'Login failed';
+      const message = err.response?.data?.message || 'Login failed. Please check your connection and try again.';
       setError(message);
       console.error('Login error:', err);
+      
+      toast({
+        variant: "destructive",
+        title: "Login failed",
+        description: message,
+      });
     } finally {
       setLoading(false);
     }
@@ -72,6 +84,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setError(null);
     
     try {
+      // For testing when backend is not available
+      if (!process.env.REACT_APP_API_URL) {
+        // Mock successful registration
+        console.log('Using mock registration since API URL is not set');
+        const mockUser = { id: 1, name, email };
+        const mockToken = 'mock-jwt-token';
+        
+        localStorage.setItem('token', mockToken);
+        localStorage.setItem('user', JSON.stringify(mockUser));
+        
+        setToken(mockToken);
+        setUser(mockUser);
+        
+        toast({
+          title: "Registration successful",
+          description: `Welcome, ${name}!`,
+        });
+        
+        navigate('/dashboard');
+        return;
+      }
+      
       const response = await apiService.auth.register({ name, email, password });
       const { token, user } = response.data;
       
@@ -82,11 +116,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(user);
       apiService.setAuthToken(token);
       
+      toast({
+        title: "Registration successful",
+        description: `Welcome, ${name}!`,
+      });
+      
       navigate('/dashboard');
     } catch (err: any) {
-      const message = err.response?.data?.message || 'Registration failed';
+      const message = err.response?.data?.message || 'Registration failed. Please check your connection and try again.';
       setError(message);
       console.error('Registration error:', err);
+      
+      toast({
+        variant: "destructive",
+        title: "Registration failed",
+        description: message,
+      });
     } finally {
       setLoading(false);
     }
@@ -98,6 +143,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setToken(null);
     setUser(null);
     apiService.setAuthToken(null);
+    
+    toast({
+      title: "Logged out",
+      description: "You have been successfully logged out.",
+    });
+    
     navigate('/login');
   };
 
