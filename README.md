@@ -93,6 +93,4 @@ A comprehensive backend system for a healthcare application using Node.js, Expre
 - TypeScript for type safety
 - React with Tailwind CSS for the frontend
 
-## License
 
-MIT
